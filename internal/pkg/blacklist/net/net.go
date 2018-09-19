@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// Download the contents of a url
 func Download(url string) (text string, err error) {
 	resp, err := http.Get(url)
 	if err != nil {

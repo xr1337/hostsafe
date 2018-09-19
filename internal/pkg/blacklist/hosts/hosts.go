@@ -16,6 +16,7 @@ func downloadsources() []string {
 	return urls
 }
 
+// Sources return a list of urls that has hosts
 func Sources() []string {
 	urls := downloadsources()
 	sourceURLs := urls[:]

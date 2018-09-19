@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// DownloadWorker function to download host and parse them. Removes commented lines
 func DownloadWorker(url string, outChan chan string) {
 	content, err := net.Download(url)
 	if err != nil {
@@ -43,6 +44,7 @@ func DownloadWorker(url string, outChan chan string) {
 	outChan <- strings.Join(goodLines, "\n")
 }
 
+// Process each host and adds them a temp file
 func Process(inChan chan string, count int) string {
 	filename := "/tmp/bad_hosts"
 	f, err := os.Create(filename)
@@ -59,6 +61,7 @@ func Process(inChan chan string, count int) string {
 	return filename
 }
 
+// ReplaceEtcHostFile /etc/host with the contents of filename
 func ReplaceEtcHostFile(filename string) {
 	if err := os.Rename(filename, "/etc/hosts"); err != nil {
 		panic(err)
