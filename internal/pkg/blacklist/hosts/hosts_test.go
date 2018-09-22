@@ -1,10 +1,14 @@
 package hosts
 
 import (
+	"errors"
 	"testing"
 )
 
 type MockResource struct {
+}
+
+type BadMockResource struct {
 }
 
 func TestSources(t *testing.T) {
@@ -24,7 +28,22 @@ func TestDownload(t *testing.T) {
 	}
 }
 
-// mock items
+func TestPanicDownload(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic")
+		}
+	}()
+	m := BadMockResource{}
+	downloadsources(m)
+}
+
+// MockResource
 func (MockResource) Download(url string) (text string, err error) {
 	return "this\nis\ncool\n", nil
+}
+
+// BadMockResource
+func (BadMockResource) Download(url string) (text string, err error) {
+	return "", errors.New("mock error")
 }
