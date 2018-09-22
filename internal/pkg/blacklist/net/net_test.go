@@ -1,14 +1,14 @@
 package net
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestDownload(t *testing.T) {
 	web := Web{}
 	data, err := web.Download("http://www.google.com")
-	if err != nil {
-		t.Errorf("download error %s", err)
-	}
-	if len(data) < 1 {
-		t.Error("download empty")
-	}
+	assert.Nil(t, err)
+	assert.True(t, len(data) > 1)
 }

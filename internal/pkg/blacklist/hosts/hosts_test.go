@@ -3,6 +3,8 @@ package hosts
 import (
 	"errors"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type MockResource struct {
@@ -14,9 +16,7 @@ type BadMockResource struct {
 func TestSources(t *testing.T) {
 	m := MockResource{}
 	urls := Sources(m)
-	if len(urls) < 2 {
-		t.Errorf("expecting results but received none")
-	}
+	assert.True(t, len(urls) > 2)
 }
 
 func TestValidateURL(t *testing.T) {
@@ -30,18 +30,14 @@ func TestValidateURL(t *testing.T) {
 		{[]string{"a", "b"}, 0},
 	}
 	for _, s := range table {
-		if actual := filterValidUrls(s.urls); len(actual) != s.expected {
-			t.Errorf("expected %s to have %d items", s.urls, s.expected)
-		}
+		assert.Equal(t, s.expected, len(filterValidUrls(s.urls)))
 	}
 }
 
 func TestDownload(t *testing.T) {
 	m := MockResource{}
 	urls := downloadSources(m)
-	if len(urls) < 1 {
-		t.Errorf("expected urls to be more than 1")
-	}
+	assert.True(t, len(urls) > 1)
 }
 
 func TestPanicDownload(t *testing.T) {
