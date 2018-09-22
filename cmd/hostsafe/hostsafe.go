@@ -8,8 +8,7 @@ import (
 
 func main() {
 	output := make(chan string, 5)
-	web := net.Web{}
-	jobs := hosts.Sources(web)
+	jobs := hosts.Sources(net.Web{})
 
 	for _, url := range jobs {
 		go hostsafe.DownloadWorker(url, output)

@@ -17,15 +17,13 @@ func downloadSources(r Resource) []string {
 		panic(err)
 	}
 	urls := strings.Split(strings.TrimSpace(text), "\n")
-
 	return urls
 }
 
 // Sources return a list of urls that has hosts
 func Sources(r Resource) []string {
 	urls := downloadSources(r)
-	sourceURLs := urls[:]
-	sourceURLs = append(sourceURLs, "https://someonewhocares.org/hosts/hosts")
+	sourceURLs := append(urls[:], "https://someonewhocares.org/hosts/hosts")
 	sourceURLs = filterValidUrls(sourceURLs)
 	return sourceURLs
 }
