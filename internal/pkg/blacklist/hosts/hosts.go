@@ -1,6 +1,7 @@
 package hosts
 
 import (
+	"net/url"
 	"strings"
 )
 
@@ -9,7 +10,7 @@ type Resource interface {
 	Download(url string) (text string, err error)
 }
 
-func downloadsources(r Resource) []string {
+func downloadSources(r Resource) []string {
 	firebogurl := "https://v.firebog.net/hosts/lists.php?type=tick"
 	text, err := r.Download(firebogurl)
 	if err != nil {
@@ -22,8 +23,19 @@ func downloadsources(r Resource) []string {
 
 // Sources return a list of urls that has hosts
 func Sources(r Resource) []string {
-	urls := downloadsources(r)
+	urls := downloadSources(r)
 	sourceURLs := urls[:]
 	sourceURLs = append(sourceURLs, "https://someonewhocares.org/hosts/hosts")
+	sourceURLs = filterValidUrls(sourceURLs)
 	return sourceURLs
+}
+
+func filterValidUrls(urls []string) []string {
+	cleanUrls := []string{}
+	for _, urlString := range urls {
+		if _, err := url.ParseRequestURI(urlString); err == nil {
+			cleanUrls = append(cleanUrls, urlString)
+		}
+	}
+	return cleanUrls
 }
