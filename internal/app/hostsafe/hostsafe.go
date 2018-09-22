@@ -1,14 +1,16 @@
 package hostsafe
 
 import (
-	"github.com/xr1337/hostsafe/internal/pkg/blacklist/net"
 	"os"
 	"strings"
+
+	"github.com/xr1337/hostsafe/internal/pkg/blacklist/net"
 )
 
 // DownloadWorker function to download host and parse them. Removes commented lines
 func DownloadWorker(url string, outChan chan string) {
-	content, err := net.Download(url)
+	web := net.Web{}
+	content, err := web.Download(url)
 	if err != nil {
 		panic(err)
 	}
