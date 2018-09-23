@@ -16,8 +16,13 @@ func DownloadWorker(url string, outChan chan string) {
 	}
 
 	lines := strings.Split(strings.TrimSpace(content), "\n")
-	goodLines := []string{}
-	for _, line := range lines {
+	goodLines := cleanHostEntry(lines)
+	outChan <- strings.Join(goodLines, "\n")
+}
+
+func cleanHostEntry(entries []string) []string {
+	cleanHosts := []string{}
+	for _, line := range entries {
 		l := strings.TrimSpace(line)
 		if len(l) <= 0 {
 			continue
@@ -26,24 +31,24 @@ func DownloadWorker(url string, outChan chan string) {
 			continue
 		}
 		if strings.HasPrefix(l, "127.0.0.1") {
-			goodLines = append(goodLines, l)
+			cleanHosts = append(cleanHosts, l)
 			continue
 		}
 		if strings.HasPrefix(l, "0.0.0.0") {
-			goodLines = append(goodLines, l)
+			cleanHosts = append(cleanHosts, l)
 			continue
 		}
 		if strings.HasPrefix(l, "0 ") {
-			goodLines = append(goodLines, l)
+			cleanHosts = append(cleanHosts, l)
 			continue
 		}
 		if strings.HasPrefix(l, "::") {
-			goodLines = append(goodLines, l)
+			cleanHosts = append(cleanHosts, l)
 			continue
 		}
-		goodLines = append(goodLines, "127.0.0.1 "+l)
+		cleanHosts = append(cleanHosts, "127.0.0.1 "+l)
 	}
-	outChan <- strings.Join(goodLines, "\n")
+	return cleanHosts
 }
 
 // Process each host and adds them a temp file
