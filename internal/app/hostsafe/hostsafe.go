@@ -15,6 +15,7 @@ func DownloadWorker(url string, outChan chan string) {
 	if err != nil {
 		fmt.Println("unable to download " + url)
 		//panic(err)
+		outChan <- ""
 		return
 	}
 
