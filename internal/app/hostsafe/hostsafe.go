@@ -1,6 +1,7 @@
 package hostsafe
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -12,7 +13,9 @@ func DownloadWorker(url string, outChan chan string) {
 	web := net.Web{}
 	content, err := web.Download(url)
 	if err != nil {
-		panic(err)
+		fmt.Println("unable to download " + url)
+		//panic(err)
+		return
 	}
 
 	lines := strings.Split(strings.TrimSpace(content), "\n")
