@@ -1,6 +1,7 @@
 package hostsafe
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
@@ -14,7 +15,6 @@ func DownloadWorker(url string, outChan chan string) {
 	content, err := web.Download(url)
 	if err != nil {
 		fmt.Println("unable to download " + url)
-		//panic(err)
 		outChan <- ""
 		return
 	}
@@ -24,39 +24,46 @@ func DownloadWorker(url string, outChan chan string) {
 	outChan <- strings.Join(goodLines, "\n")
 }
 
+func extractHost(entry string) string {
+	if len(entry) <= 0 {
+		return ""
+	}
+	if strings.HasPrefix(entry, "#") {
+		return ""
+	}
+	entry = strings.Replace(entry, "127.0.0.1", "", -1)
+	parts := strings.Split(strings.TrimSpace(entry), " ")
+	if len(parts) == 1 {
+		return parts[0]
+	}
+	return parts[1]
+}
+
 func cleanHostEntry(entries []string) []string {
 	cleanHosts := []string{}
 	for _, line := range entries {
 		l := strings.TrimSpace(line)
-		if len(l) <= 0 {
-			continue
+		host := extractHost(l)
+		if len(host) > 0 {
+			cleanHosts = append(cleanHosts, host)
 		}
-		if strings.HasPrefix(l, "#") {
-			continue
-		}
-		if strings.HasPrefix(l, "127.0.0.1") {
-			cleanHosts = append(cleanHosts, l)
-			continue
-		}
-		if strings.HasPrefix(l, "0.0.0.0") {
-			cleanHosts = append(cleanHosts, l)
-			continue
-		}
-		if strings.HasPrefix(l, "0 ") {
-			cleanHosts = append(cleanHosts, l)
-			continue
-		}
-		if strings.HasPrefix(l, "::") {
-			cleanHosts = append(cleanHosts, l)
-			continue
-		}
-		cleanHosts = append(cleanHosts, "127.0.0.1 "+l)
 	}
 	return cleanHosts
 }
 
 // Process each host and adds them a temp file
 func Process(inChan chan string, count int) string {
+	var m map[string]string
+	m = make(map[string]string)
+	for i := 0; i < count; i++ {
+		text := <-inChan
+		scanner := bufio.NewScanner(strings.NewReader(text))
+		for scanner.Scan() {
+			host := scanner.Text()
+			m[host] = ""
+		}
+	}
+
 	filename := "/tmp/bad_hosts"
 	f, err := os.Create(filename)
 	if err != nil {
@@ -64,9 +71,8 @@ func Process(inChan chan string, count int) string {
 	}
 	defer f.Close()
 
-	for i := 0; i < count; i++ {
-		text := <-inChan
-		f.WriteString(text)
+	for key := range m {
+		f.WriteString("127.0.0.1 " + key + "\n")
 	}
 	f.Sync()
 	return filename
