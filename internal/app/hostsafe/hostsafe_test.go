@@ -12,6 +12,7 @@ func TestHostValidate(t *testing.T) {
 		expected int
 	}{
 		{[]string{"127.0.0.1 badhhost.com"}, 1},
+		{[]string{"127.0.0.1 #badhhost.com"}, 0},
 		{[]string{"#this is a comment"}, 0},
 		{[]string{":: abc.com"}, 1},
 		{[]string{"0 abc.com"}, 1},

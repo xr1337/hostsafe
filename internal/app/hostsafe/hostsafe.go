@@ -28,7 +28,7 @@ func extractHost(entry string) string {
 	if len(entry) <= 0 {
 		return ""
 	}
-	if strings.HasPrefix(entry, "#") {
+	if strings.Contains(entry, "#") {
 		return ""
 	}
 	entry = strings.Replace(entry, "127.0.0.1", "", -1)
