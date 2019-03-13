@@ -52,7 +52,7 @@ func cleanHostEntry(entries []string) []string {
 }
 
 // Process each host and adds them a temp file
-func Process(inChan chan string, count int) string {
+func Process(inChan chan string, count int, exclude map[string]string) string {
 	var m map[string]string
 	m = make(map[string]string)
 	for i := 0; i < count; i++ {
@@ -60,7 +60,9 @@ func Process(inChan chan string, count int) string {
 		scanner := bufio.NewScanner(strings.NewReader(text))
 		for scanner.Scan() {
 			host := scanner.Text()
-			m[host] = ""
+			if _, ok := exclude[host]; !ok {
+				m[host] = ""
+			}
 		}
 	}
 
