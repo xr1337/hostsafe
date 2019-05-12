@@ -10,6 +10,14 @@ type Resource interface {
 	Download(url string) (text string, err error)
 }
 
+// Sources return a list of urls that has hosts
+func Sources(r Resource) []string {
+	urls := downloadSources(r)
+	sourceURLs := append(urls[:], "https://someonewhocares.org/hosts/hosts")
+	sourceURLs = filterValidUrls(sourceURLs)
+	return sourceURLs
+}
+
 func downloadSources(r Resource) []string {
 	firebogurl := "https://v.firebog.net/hosts/lists.php?type=tick"
 	text, err := r.Download(firebogurl)
@@ -18,14 +26,6 @@ func downloadSources(r Resource) []string {
 	}
 	urls := strings.Split(strings.TrimSpace(text), "\n")
 	return urls
-}
-
-// Sources return a list of urls that has hosts
-func Sources(r Resource) []string {
-	urls := downloadSources(r)
-	sourceURLs := append(urls[:], "https://someonewhocares.org/hosts/hosts")
-	sourceURLs = filterValidUrls(sourceURLs)
-	return sourceURLs
 }
 
 func filterValidUrls(urls []string) []string {

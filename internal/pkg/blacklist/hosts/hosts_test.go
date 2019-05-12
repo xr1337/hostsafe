@@ -52,7 +52,7 @@ func TestPanicDownload(t *testing.T) {
 
 // MockResource
 func (MockResource) Download(url string) (text string, err error) {
-	return "https://www.google.com\nhttps://www.booking.com\n", nil
+	return "https://www.google.com\nhttps://www.yahoo.com\n", nil
 }
 
 // BadMockResource

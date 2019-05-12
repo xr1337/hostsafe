@@ -9,7 +9,7 @@ import (
 type Web struct {
 }
 
-// Download the contents of a url
+// Download the contents of a url and returns a string
 func (Web) Download(url string) (text string, err error) {
 	resp, err := http.Get(url)
 	if err != nil {
